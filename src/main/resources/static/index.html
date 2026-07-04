@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCare Clinic Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="glow-backdrop"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="main-nav" style="display: none;">
+        <div class="nav-brand">
+            <span style="color: var(--accent-primary);">✦</span> SmartCare Portal
+        </div>
+        <div class="nav-links">
+            <span id="user-display" style="font-weight: 500;">Username (Role)</span>
+            <button class="btn-secondary" id="logout-btn">Sign Out</button>
+        </div>
+    </nav>
+
+    <!-- 1. Authentication View -->
+    <div class="auth-wrapper" id="auth-view">
+        <div class="glass-card">
+            <h2 id="auth-title" class="gradient-text">Welcome Back</h2>
+            
+            <!-- Login Form -->
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <p style="margin-top: 20px; text-align: center; font-size: 14px; color: var(--text-secondary);">
+                    Don't have an account? <a href="#" id="to-register" style="color: var(--accent-primary); text-decoration: none;">Register here</a>
+                </p>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="register-form" style="display: none;">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" required placeholder="Enter password">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" required placeholder="name@domain.com">
+                </div>
+                <div class="form-group">
+                    <label for="reg-role">Account Type</label>
+                    <select id="reg-role" required>
+                        <option value="PATIENT">Patient</option>
+                        <option value="DOCTOR">Doctor</option>
+                    </select>
+                </div>
+
+                <!-- Patient Specific Fields -->
+                <div id="patient-fields">
+                    <div class="form-group">
+                        <label for="patient-name">Full Name</label>
+                        <input type="text" id="patient-name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-dob">Date of Birth</label>
+                        <input type="date" id="patient-dob">
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-phone">Phone Number</label>
+                        <input type="text" id="patient-phone" placeholder="555-1234">
+                    </div>
+                    <div class="form-group">
+                        <label for="patient-history">Medical Summary</label>
+                        <textarea id="patient-history" placeholder="Any chronic illnesses, allergies, etc."></textarea>
+                    </div>
+                </div>
+
+                <!-- Doctor Specific Fields -->
+                <div id="doctor-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="doctor-name">Full Name</label>
+                        <input type="text" id="doctor-name" placeholder="Dr. Jane Smith">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-specialization">Specialization</label>
+                        <input type="text" id="doctor-specialization" placeholder="Cardiology / Pediatrics">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-phone">Phone Number</label>
+                        <input type="text" id="doctor-phone" placeholder="555-4321">
+                    </div>
+                    <div class="form-group">
+                        <label for="doctor-availability">Availability / Hours</label>
+                        <input type="text" id="doctor-availability" placeholder="Mon-Fri 09:00 - 17:00">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Register Account</button>
+                <p style="margin-top: 20px; text-align: center; font-size: 14px; color: var(--text-secondary);">
+                    Already have an account? <a href="#" id="to-login" style="color: var(--accent-primary); text-decoration: none;">Sign in here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Portal Workspace View -->
+    <div class="dashboard-container" id="portal-view" style="display: none;">
+        
+        <!-- ADMIN DASHBOARD -->
+        <div id="admin-dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="gradient-text">Admin Panel</h1>
+                    <p style="color: var(--text-secondary);">Overview of clinic resources, appointments, and performance.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="admin-stats-grid">
+                <!-- Loaded dynamically -->
+            </div>
+
+            <div class="sections-grid">
+                <div class="section-card">
+                    <h3>All Appointments</h3>
+                    <table id="admin-appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="section-card">
+                    <h3>Active Doctors</h3>
+                    <table id="admin-doctors-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Specialization</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- DOCTOR DASHBOARD -->
+        <div id="doctor-dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="gradient-text">Doctor Console</h1>
+                    <p style="color: var(--text-secondary);" id="doctor-welcome-sub">Manage your schedules, checkups, and prescriptions.</p>
+                </div>
+            </div>
+
+            <div class="sections-grid">
+                <div class="section-card">
+                    <h3>Consultation Appointments</h3>
+                    <table id="doctor-appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Patient Name</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="section-card">
+                    <h3>Prescriptions Issued</h3>
+                    <table id="doctor-prescriptions-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Diagnosis</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PATIENT DASHBOARD -->
+        <div id="patient-dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="gradient-text">Patient Portal</h1>
+                    <p style="color: var(--text-secondary);">Book consulting slots and access your medical logs and prescriptions.</p>
+                </div>
+            </div>
+
+            <div class="sections-grid">
+                <div class="section-card">
+                    <h3>Your Appointments</h3>
+                    <table id="patient-appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Doctor</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                    <h3 style="margin-top: 40px;">My Prescriptions</h3>
+                    <table id="patient-prescriptions-table">
+                        <thead>
+                            <tr>
+                                <th>Issued By</th>
+                                <th>Diagnosis</th>
+                                <th>Instructions</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="section-card">
+                    <h3>Schedule Consultation</h3>
+                    <form id="book-appointment-form">
+                        <div class="form-group">
+                            <label for="book-doctor">Select Specialist</label>
+                            <select id="book-doctor" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-date">Preferred Date & Time</label>
+                            <input type="datetime-local" id="book-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-reason">Reason for Visit</label>
+                            <textarea id="book-reason" required placeholder="Describe symptoms or purpose"></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Request Appointment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modals -->
+    <!-- 1. Write Prescription Modal -->
+    <div class="modal-overlay" id="prescription-modal">
+        <div class="modal-content">
+            <h3>New Prescription</h3>
+            <form id="prescription-form">
+                <input type="hidden" id="presc-appt-id">
+                <input type="hidden" id="presc-pat-id">
+                <input type="hidden" id="presc-pat-name">
+
+                <div class="form-group">
+                    <label>Symptoms (comma separated)</label>
+                    <input type="text" id="presc-symptoms" placeholder="Cough, fever, fatigue" required>
+                </div>
+                <div class="form-group">
+                    <label>Diagnosis</label>
+                    <input type="text" id="presc-diagnosis" placeholder="Acute Bronchitis" required>
+                </div>
+                
+                <h4 style="margin-bottom: 10px;">Medication</h4>
+                <div class="form-group">
+                    <label>Medicine Name</label>
+                    <input type="text" id="med-name" placeholder="Amoxicillin 500mg" required>
+                </div>
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label>Frequency</label>
+                        <input type="text" id="med-frequency" placeholder="Twice a day" required>
+                    </div>
+                    <div>
+                        <label>Duration</label>
+                        <input type="text" id="med-duration" placeholder="7 days" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>General Instructions</label>
+                    <textarea id="presc-instructions" placeholder="Take after meals. Rest well."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn-secondary" onclick="closePrescriptionModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" style="width: auto;">Submit Prescription</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. View Prescription Modal -->
+    <div class="modal-overlay" id="view-prescription-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h3 class="gradient-text" style="border-bottom: 1px solid var(--border-card); padding-bottom: 10px;">Prescription Slip</h3>
+            <div id="prescription-detail-content" style="margin: 20px 0; line-height: 1.6;">
+                <!-- Filled dynamically -->
+            </div>
+            <div style="text-align: right;">
+                <button class="btn-primary" style="width: auto;" onclick="closeViewPrescriptionModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
