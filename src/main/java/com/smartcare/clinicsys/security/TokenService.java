@@ -5,14 +5,14 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-@Component
-public class JwtUtils {
+@Service
+public class TokenService {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -48,7 +48,7 @@ public class JwtUtils {
             Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(authToken);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            // Token is invalid
+            // Invalid token structure
         }
         return false;
     }
