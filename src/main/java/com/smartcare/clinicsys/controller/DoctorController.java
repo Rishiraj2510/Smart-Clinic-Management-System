@@ -1,7 +1,7 @@
 package com.smartcare.clinicsys.controller;
 
 import com.smartcare.clinicsys.model.Doctor;
-import com.smartcare.clinicsys.repository.DoctorRepository;
+import com.smartcare.clinicsys.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,25 +15,22 @@ import java.util.List;
 public class DoctorController {
 
     @Autowired
-    private DoctorRepository doctorRepository;
-
-    @Autowired
-    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private DoctorService doctorService;
 
     @GetMapping("/stats")
     @PreAuthorize("hasRole('ADMIN')")
     public List<?> getDoctorStats() {
-        return jdbcTemplate.queryForList("CALL GetDoctorAppointmentStats()");
+        return doctorService.getDoctorStats();
     }
 
     @GetMapping
     public List<Doctor> getAllDoctors() {
-        return doctorRepository.findAll();
+        return doctorService.getAllDoctors();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Doctor> getDoctorById(@PathVariable Long id) {
-        return doctorRepository.findById(id)
+        return doctorService.getDoctorById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -41,15 +38,8 @@ public class DoctorController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DOCTOR')")
     public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody Doctor doctorDetails) {
-        return doctorRepository.findById(id)
-                .map(doctor -> {
-                    doctor.setName(doctorDetails.getName());
-                    doctor.setSpecialization(doctorDetails.getSpecialization());
-                    doctor.setPhone(doctorDetails.getPhone());
-                    doctor.setAvailability(doctorDetails.getAvailability());
-                    Doctor updatedDoctor = doctorRepository.save(doctor);
-                    return ResponseEntity.ok(updatedDoctor);
-                })
+        return doctorService.updateDoctor(id, doctorDetails)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 }
